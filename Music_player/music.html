@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>music</title>
+    <title>Music</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
         integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -13,14 +13,27 @@
 </head>
 
 <body>
+    
     <div class="main_div">
         <div class="music_container">
-            <h2 id="title">Click on Next & Feel The Beats</h2>
-            <h3 id="artist">Welcome to Nikhil's music player</h3>
+            <h2 id="title">Song Title</h2>
+            <h3 id="artist">Artist Name</h3>
             <div class="img_container">
                 <img src="./images/music.jpeg" alt="">
             </div>
             <audio src="./music/intro.mpeg"></audio>
+
+            <!-- -------------------------- -->
+            <div class="progress_container" id="progress_continer">
+                <div class="progress_duration">
+                    <div id="current_time">00:00</div>
+                    <div id="duration">00:00</div>
+                </div>
+
+                <div class="progress_div" id="progress_div">
+                    <div class="progress" id="progress"></div>
+                </div>
+            </div>
             <!-- controlas -->
             <div class="music_controls">
                 <i class="fas fa-backward" id="prev" title="previous"></i>
@@ -29,6 +42,7 @@
             </div>
         </div>
     </div>
+    <h2>Nikhil Babhulkar</h2>
 
     <!-- js is starting from here -->
     <script>
@@ -39,6 +53,10 @@
         const prev = document.getElementById("prev");
         const title = document.getElementById("title");
         const artist = document.getElementById("artist");
+        let progress = document.getElementById("progress");
+        let Hduration = document.getElementById("duration");
+        let current_time = document.getElementById("current_time");
+        const progress_div = document.getElementById("progress_div");
 
         const songs = [
             {
@@ -72,6 +90,11 @@
                 title: "best of English",
                 artist: "Unknown",
 
+            },
+            {
+                name: "superhero",
+                title: "Something just like this",
+                artist: "The Chainsmokers "
             }
         ]
 
@@ -90,14 +113,6 @@
             img.classList.remove("anime")
         }
         play.addEventListener("click", () => {
-
-            // if(ismusic) {
-            //         musicp()
-            //     }
-            //     else{
-            //         musics()
-            //     }
-
             ismusic ? musicp() : musics()
         })
 
@@ -124,8 +139,48 @@
             //here in above code i have chage the song now make it play automatically
             music.play();
         }
-        next.addEventListener("click", nextsong)
-        prev.addEventListener("click", prevsong)
+
+        //java script for progress bar
+        music.addEventListener('timeupdate', (event) => {
+            //use the timeupdate fuction
+            //here we have fatch the required value of the time 
+            const { currentTime, duration } = event.srcElement;
+            let progresstime = (currentTime / duration) * 100;
+            progress.style.width = `${progresstime}%`;
+
+            //static value change 
+            let time = Math.floor(event.srcElement.duration / 60);
+            let sec = Math.floor(event.srcElement.duration % 60);
+            // console.log(time ," ", sec);
+            Hduration.textContent = `${time}:${sec} s`;
+            current_time.textContent = `${Math.floor(currentTime)}`;
+
+
+            //for current time
+
+            let currenttime = Math.floor(event.srcElement.currentTime / 60);
+            let currentsec = Math.floor(event.srcElement.currentTime % 60);
+            if (currentsec < 10) {
+                currentsec = `0${currentsec}`;
+            }
+
+            current_time.textContent = `${currenttime}:${currentsec}`;
+
+        });
+
+        progress_div.addEventListener("click", (event) => {
+            //offset gives you the lenght using which you can travell on progress bar
+            const { duration } = music;
+            let mover = (event.offsetX / event.srcElement.clientWidth) * duration;
+            // console.log(mover)
+            // console.log(duration)
+            music.currentTime =mover;
+
+        });
+
+        music.addEventListener("ended", nextsong);
+        next.addEventListener("click", nextsong);
+        prev.addEventListener("click", prevsong);
     </script>
 </body>
 
